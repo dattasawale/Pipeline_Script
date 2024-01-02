@@ -1,36 +1,37 @@
-pipeline {
-    agent none
+pipeline  {
+    agent any
     stages {
-	
-	stage('Non-Parallel Stage') {
-	    agent {
-                        label "master"
-                }
-        steps {
-                echo 'This stage will be executed first'
-                }
+        stage('Git checkout') {
+            steps {
+                echo "Checking out done Git repo";
+            }
         }
-
-	
-        stage('Run Tests') {
-            parallel {
-                stage('Test On Windows') {
-                    agent {
-                        label "Windows_Node"
-                    }
-                    steps {
-                        echo "Task1 on Agent"
-                    }
-                    
-                }
-                stage('Test On Master') {
-                    agent {
-                        label "master"
-                    }
-                    steps {
-						echo "Task1 on Master"
-					}
-                }
+        
+        stage('Buid') {
+            steps {
+                echo "Running Build.bat";
+                bat 'Build.bat'
+            }
+        }
+        
+        stage('JUnit') {
+            steps {
+                echo "Running Unit.bat";
+                bat 'Unit.bat'
+            }
+        }
+        
+        stage('Quality') {
+            steps {
+                echo "Running Quality.bat";
+                bat 'Quality.bat'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                echo "Running Deploy.bat";
+                bat 'Deploy.bat'
             }
         }
     }
